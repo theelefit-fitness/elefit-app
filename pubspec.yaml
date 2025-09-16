@@ -1,7 +1,7 @@
 name: elefit_app
 description: A new Flutter project.
 publish_to: 'none'
-version: 1.0.0+1
+version: 1.0.2+5
 
 environment:
   sdk: '>=2.19.0 <4.0.0'
@@ -38,8 +38,8 @@ dev_dependencies:
 flutter_icons:
   android: true
   ios: true
-  image_path: assets/images/elefit_logo.png
-  adaptive_icon_foreground: assets/images/elefit_logo.png
+  image_path: assets/images/LogoIcon9.png
+  adaptive_icon_foreground: assets/images/LogoIcon9.png
   adaptive_icon_background: "#FFFFFF"
   min_sdk_android: 21
   remove_alpha_ios: true
@@ -50,6 +50,7 @@ flutter:
   assets:
     - assets/images/
     - assets/images/elefit_logo.png
+    - assets/images/LogoIcon9.png
     - assets/videos/video.mp4
     - assets/videos/video2.mp4
     - assets/videos/video3.mp4

@@ -17,7 +17,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "com.example.elefit_app"
+    namespace = "com.theelefit.app"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = "27.0.12077973"
 
@@ -31,7 +31,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.elefit_app"
+        applicationId = "com.theelefit.app"
         minSdk = 21  // Ensure minSdk is at least 21
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
@@ -63,9 +63,4 @@ android {
 
 flutter {
     source = "../.."
-}
-
-dependencies {
-    // Ensure Play Core classes are present for Flutter deferred components references
-    implementation("com.google.android.play:core:1.10.3")
 }

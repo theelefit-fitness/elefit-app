@@ -1,4 +1,4 @@
-package com.example.elefit_app
+package com.theelefit.app
 
 import io.flutter.embedding.android.FlutterActivity
 

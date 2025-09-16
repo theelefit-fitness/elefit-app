@@ -169,21 +169,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
             );
           },
         ),
-        ListTile(
-          leading: const Icon(Icons.payment),
-          title: const Text('Payment Methods'),
-          onTap: () {
+        //ListTile(
+          //leading: const Icon(Icons.payment),
+          //title: const Text('Payment Methods'),
+          //onTap: () {
             // Navigate to payment methods screen
-          },
-        ),
+          //},
+        //),
         const Divider(),
-        ListTile(
-          leading: const Icon(Icons.settings_outlined),
-          title: const Text('Settings'),
-          onTap: () {
+        //ListTile(
+          //leading: const Icon(Icons.settings_outlined),
+          //title: const Text('Settings'),
+          //onTap: () {
             // Navigate to settings screen
-          },
-        ),
+          //},
+        //),
         ListTile(
           leading: const Icon(Icons.info_outline),
           title: const Text('About'),
@@ -195,13 +195,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
             );
           },
         ),
-        ListTile(
-          leading: const Icon(Icons.help_outline),
-          title: const Text('Help & Support'),
-          onTap: () {
+        //ListTile(
+          //leading: const Icon(Icons.help_outline),
+          //title: const Text('Help & Support'),
+          //onTap: () {
             // Navigate to help screen
-          },
-        ),
+          //},
+        //),
         ListTile(
           leading: const Icon(Icons.logout),
           title: const Text('Sign Out'),
