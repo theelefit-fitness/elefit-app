@@ -12,6 +12,8 @@ import '../screens/OrdersScreen.dart';
 import '../screens/HelpScreen.dart';
 import '../screens/address_screen.dart';
 import '../models/address_model.dart';
+import '../services/onesignal_service.dart';
+import '../services/navigation_service.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -169,19 +171,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
             );
           },
         ),
-        //ListTile(
-          //leading: const Icon(Icons.payment),
-          //title: const Text('Payment Methods'),
-          //onTap: () {
-            // Navigate to payment methods screen
-          //},
-        //),
         const Divider(),
         //ListTile(
           //leading: const Icon(Icons.settings_outlined),
           //title: const Text('Settings'),
           //onTap: () {
-            // Navigate to settings screen
           //},
         //),
         ListTile(

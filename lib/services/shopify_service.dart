@@ -501,6 +501,81 @@ class ShopifyService {
     }
   }
 
+  Future<Map<String, dynamic>?> getProductById(String productId) async {
+    // Convert numeric ID to Shopify GID format if needed
+    String gid = productId;
+    if (RegExp(r'^\d+$').hasMatch(productId)) {
+      gid = 'gid://shopify/Product/$productId';
+    }
+    
+    String query = '''
+      query {
+        product(id: "$gid") {
+          id
+          title
+          handle
+          description
+          priceRange {
+            minVariantPrice {
+              amount
+              currencyCode
+            }
+          }
+          images(first: 5) {
+            edges {
+              node {
+                url
+                altText
+              }
+            }
+          }
+          variants(first: 10) {
+            edges {
+              node {
+                id
+                title
+                price {
+                  amount
+                  currencyCode
+                }
+                availableForSale
+                selectedOptions {
+                  name
+                  value
+                }
+              }
+            }
+          }
+        }
+      }
+    ''';
+
+    try {
+      final graphQLClient = await client;
+      final QueryOptions options = QueryOptions(
+        document: gql(query),
+        fetchPolicy: FetchPolicy.noCache,
+      );
+
+      final QueryResult result = await graphQLClient.query(options);
+
+      if (result.hasException) {
+        print('Error fetching product by ID: ${result.exception}');
+        return null;
+      }
+
+      if (result.data?['product'] != null) {
+        return result.data?['product'];
+      } else {
+        print('Product not found with ID: $productId');
+        return null;
+      }
+    } catch (e) {
+      print('Exception while fetching product by ID: $e');
+      return null;
+    }
+  }
+
   Future<Map<String, dynamic>?> customerAccessTokenCreate({
     required String email,
     required String password,

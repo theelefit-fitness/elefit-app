@@ -41,30 +41,83 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   }
 
   void _initializeProductData() {
-    // Initialize variants
-    if (widget.product['variants'] != null && 
-        widget.product['variants']['edges'] != null) {
-      _variants = (widget.product['variants']['edges'] as List)
-          .map((edge) => edge['node'] as Map<String, dynamic>)
-          .toList();
-    } else {
+    try {
+      print('🔧 Initializing product data...');
+      print('📦 Product keys: ${widget.product.keys.toList()}');
+      
+      // Initialize variants with comprehensive null checking
       _variants = [];
+      if (widget.product['variants'] != null) {
+        var variantsData = widget.product['variants'];
+        if (variantsData is Map && variantsData['edges'] != null) {
+          var edges = variantsData['edges'];
+          if (edges is List) {
+            _variants = edges
+                .where((edge) => edge != null && edge['node'] != null)
+                .map((edge) => Map<String, dynamic>.from(edge['node'] as Map))
+                .toList();
+          }
+        }
+      }
+      
+      print('🏷️ Variants found: ${_variants?.length ?? 0}');
+
+      // Set initial variant ID with extra safety
+      _selectedVariantId = '';
+      if (_variants?.isNotEmpty == true) {
+        var firstVariant = _variants![0];
+        if (firstVariant['id'] != null) {
+          _selectedVariantId = firstVariant['id'].toString();
+        }
+      }
+      
+      print('🆔 Selected variant ID: $_selectedVariantId');
+
+      // Initialize images with comprehensive null checking
+      _productImages = [];
+      
+      // Try to get images from the images array
+      if (widget.product['images'] != null) {
+        var imagesData = widget.product['images'];
+        if (imagesData is List) {
+          _productImages = imagesData
+              .where((img) => img != null && img.toString().isNotEmpty)
+              .map((img) => img.toString())
+              .toList();
+        }
+      }
+      
+      // Fallback to single image field
+      if (_productImages.isEmpty && widget.product['image'] != null) {
+        String singleImage = widget.product['image'].toString();
+        if (singleImage.isNotEmpty) {
+          _productImages = [singleImage];
+        }
+      }
+      
+      // Final fallback to placeholder
+      if (_productImages.isEmpty) {
+        _productImages = ['https://via.placeholder.com/400x400?text=No+Image'];
+      }
+      
+      print('📸 Images found: ${_productImages.length}');
+      print('✅ Product data initialization complete');
+      
+    } catch (e) {
+      print('❌ Error initializing product data: $e');
+      
+      // Emergency fallback
+      _variants = [];
+      _selectedVariantId = '';
+      _productImages = ['https://via.placeholder.com/400x400?text=Error+Loading+Image'];
     }
-
-    // Set initial variant ID
-    _selectedVariantId = _variants?.isNotEmpty == true 
-        ? _variants![0]['id'] 
-        : '';
-
-    // Initialize images
-    _productImages = List<String>.from(widget.product['images'] ?? [widget.product['image']]);
   }
 
   void _updateSelectedVariant(int variantIndex) {
     if (_variants?.isNotEmpty == true && variantIndex < _variants!.length) {
       setState(() {
         _selectedSize = variantIndex;
-        _selectedVariantId = _variants![variantIndex]['id'];
+        _selectedVariantId = _variants![variantIndex]['id']?.toString() ?? '';
       });
     }
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'models/cart_model.dart';
 import 'models/wishlist_model.dart';
 import 'models/address_model.dart';
@@ -9,6 +10,8 @@ import 'screens/auth_screen.dart';
 import 'screens/product_details_screen.dart';
 import 'theme/app_theme.dart';
 import 'services/shopify_service.dart';
+import 'services/onesignal_service.dart';
+import 'services/navigation_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
 import 'providers/location_provider.dart';
@@ -18,6 +21,12 @@ import 'screens/HelpScreen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Firebase (keep for other services if needed)
+  await Firebase.initializeApp();
+  
+  // Initialize OneSignal for notifications and in-app messages
+  await OneSignalService.initialize();
 
   // Set preferred orientations
   await SystemChrome.setPreferredOrientations([
@@ -71,6 +80,7 @@ class MyApp extends StatelessWidget {
           darkTheme: AppTheme.darkTheme,
           themeMode: themeProvider.themeMode,
           debugShowCheckedModeBanner: false,
+          navigatorKey: NavigationService.navigatorKey,
           home: MainLayout(
             currentIndex: 0,
             child: const HomeScreen(),

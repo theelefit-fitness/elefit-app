@@ -4,6 +4,8 @@ plugins {
     id("com.android.application")
     id("kotlin-android")
     id("dev.flutter.flutter-gradle-plugin")
+    // Add the Google services Gradle plugin
+    id("com.google.gms.google-services")
 }
 
 // Load signing properties from android/key.properties or android/app/key.properties
@@ -32,7 +34,7 @@ android {
 
     defaultConfig {
         applicationId = "com.theelefit.app"
-        minSdk = 21  // Ensure minSdk is at least 21
+        minSdk = 23  // Required for Firebase Messaging
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
@@ -59,6 +61,16 @@ android {
             )
         }
     }
+}
+
+dependencies {
+    // Import the Firebase BoM
+    implementation(platform("com.google.firebase:firebase-bom:34.3.0"))
+
+    // Firebase products for EleFit
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-messaging")
+    implementation("com.google.firebase:firebase-inappmessaging-display")
 }
 
 flutter {
