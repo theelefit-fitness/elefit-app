@@ -22,8 +22,14 @@ import 'screens/HelpScreen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase (keep for other services if needed)
-  await Firebase.initializeApp();
+  // Initialize Firebase (optional - only if GoogleService-Info.plist is configured)
+  try {
+    await Firebase.initializeApp();
+    print('Firebase initialized successfully');
+  } catch (e) {
+    print('Firebase initialization skipped: $e');
+    // Continue without Firebase - OneSignal handles notifications
+  }
   
   // Initialize OneSignal for notifications and in-app messages
   await OneSignalService.initialize();
