@@ -1,45 +1,45 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
-  // Primary brand colors
-  static const Color primaryColor = Color(0xFF1E1E2C); // Dark blue-gray
-  static const Color accentColor = Color(0xFF00D9B8); // Vibrant teal
-  static const Color energyColor = Color(0xFFFF3D71); // Vibrant pink-red
-  static const Color backgroundColor = Color(0xFF121212); // Dark background
-  static const Color surfaceColor = Color(0xFF1E1E2C); // Dark surface
-  static const Color textColor = Color(0xFFF8F9FA); // Light text
-  static const Color secondaryTextColor = Color(0xFFB0B3B8); // Muted text
-  static const Color successColor = Color(0xFF00E096); // Vibrant green
-  static const Color saleColor = Color(0xFFFF3D71); // Same as energyColor
+  // Primary brand colors - New Palette
+  static const Color primaryColor = Color(0xFF4E3580); // Deep Purple - headers, app bar
+  static const Color accentColor = Color(0xFFC8DA2B); // Lime Green - CTAs, accents, icons
+  static const Color energyColor = Color(0xFFC8DA2B); // Lime Green - success, positive actions
+  static const Color backgroundColor = Color(0xFFF8F8F8); // Light gray background
+  static const Color surfaceColor = Color(0xFFFFFFFF); // White surface
+  static const Color textColor = Color(0xFF4D4D4D); // Dark gray - primary text
+  static const Color secondaryTextColor = Color(0xFF6B6B6B); // Medium gray - secondary text
+  static const Color successColor = Color(0xFFC8DA2B); // Lime Green - success states
+  static const Color saleColor = Color(0xFFC8DA2B); // Lime Green - highlights
 
   // Light theme colors
-  static const Color lightPrimaryColor = Color(0xFF1E1E2C);
-  static const Color lightBackgroundColor = Color(0xFFF8F9FA);
-  static const Color lightSurfaceColor = Colors.white;
-  static const Color lightTextColor = Color(0xFF1E1E2C);
-  static const Color lightSecondaryTextColor = Color(0xFF6C757D);
+  static const Color lightPrimaryColor = Color(0xFF4E3580); // Deep Purple
+  static const Color lightBackgroundColor = Color(0xFFF8F8F8); // Light gray
+  static const Color lightSurfaceColor = Color(0xFFFFFFFF); // White
+  static const Color lightTextColor = Color(0xFF4D4D4D); // Dark gray
+  static const Color lightSecondaryTextColor = Color(0xFF6B6B6B); // Medium gray
 
   // Additional brand colors
-  static const Color goldAccent = Color(0xFFFFD700);
-  static const Color darkTeal = Color(0xFF008B8B);
-  static const Color darkGrey = Color(0xFF2A2A3C);
-  static const Color lightGrey = Color(0xFF3A3A4C);
+  static const Color goldAccent = Color(0xFFC8DA2B); // Lime Green for highlights
+  static const Color darkTeal = Color(0xFF4E3580); // Deep Purple alternative
+  static const Color darkGrey = Color(0xFF4D4D4D); // Dark gray for cards/UI
+  static const Color lightGrey = Color(0xFF6B6B6B); // Medium gray
 
   // Gradients
   static const LinearGradient primaryGradient = LinearGradient(
-    colors: [primaryColor, Color(0xFF2A2A3C)],
+    colors: [primaryColor, Color(0xFF3A2860)], // Deep Purple gradient
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
   static const LinearGradient energyGradient = LinearGradient(
-    colors: [energyColor, Color(0xFFFF71A3)],
+    colors: [accentColor, Color(0xFFD4E84F)], // Lime Green gradient
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
   static const LinearGradient accentGradient = LinearGradient(
-    colors: [accentColor, Color(0xFF00B8D4)],
+    colors: [accentColor, Color(0xFFB8C625)], // Lime Green darker gradient
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
@@ -48,24 +48,24 @@ class AppTheme {
     useMaterial3: true,
     primaryColor: primaryColor,
     scaffoldBackgroundColor: backgroundColor,
-    colorScheme: const ColorScheme.dark(
-      primary: accentColor,
-      secondary: energyColor,
-      error: energyColor,
-      background: backgroundColor,
-      surface: surfaceColor,
-      onPrimary: textColor,
-      onSecondary: textColor,
-      onSurface: textColor,
-      onBackground: textColor,
+    colorScheme: const ColorScheme.light(
+      primary: accentColor, // Lime Green
+      secondary: primaryColor, // Deep Purple
+      error: Color(0xFFFF3D71), // Red for errors
+      background: backgroundColor, // Light gray
+      surface: surfaceColor, // White
+      onPrimary: Color(0xFF000000), // Black text on lime green
+      onSecondary: Color(0xFFFFFFFF), // White text on deep purple
+      onSurface: textColor, // Dark gray text
+      onBackground: textColor, // Dark gray text
     ),
-    appBarTheme: AppBarTheme(
-      backgroundColor: surfaceColor,
+    appBarTheme: const AppBarTheme(
+      backgroundColor: primaryColor, // Deep Purple
       elevation: 0,
       centerTitle: true,
-      iconTheme: const IconThemeData(color: textColor),
-      titleTextStyle: const TextStyle(
-        color: textColor,
+      iconTheme: IconThemeData(color: Color(0xFFFFFFFF)), // White icons
+      titleTextStyle: TextStyle(
+        color: Color(0xFFFFFFFF), // White text
         fontSize: 20,
         fontWeight: FontWeight.bold,
         letterSpacing: 0.5,
@@ -75,8 +75,8 @@ class AppTheme {
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        backgroundColor: accentColor,
-        foregroundColor: backgroundColor,
+        backgroundColor: accentColor, // Lime Green
+        foregroundColor: const Color(0xFF000000), // Black text
         elevation: 4,
         padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
         shape: RoundedRectangleBorder(
@@ -172,9 +172,9 @@ class AppTheme {
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 0),
     ),
     chipTheme: ChipThemeData(
-      backgroundColor: darkGrey,
-      selectedColor: accentColor.withOpacity(0.2),
-      labelStyle: const TextStyle(color: textColor),
+      backgroundColor: const Color(0xFFE8E8E8), // Light gray
+      selectedColor: accentColor.withOpacity(0.2), // Lime Green tint
+      labelStyle: const TextStyle(color: textColor), // Dark gray text
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
@@ -182,7 +182,7 @@ class AppTheme {
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      fillColor: darkGrey,
+      fillColor: const Color(0xFFF0F0F0), // Very light gray
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
         borderSide: BorderSide.none,
@@ -193,25 +193,25 @@ class AppTheme {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide: const BorderSide(color: accentColor),
+        borderSide: const BorderSide(color: accentColor, width: 2), // Lime Green
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide: const BorderSide(color: energyColor),
+        borderSide: const BorderSide(color: Color(0xFFFF3D71)), // Red
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       labelStyle: const TextStyle(color: secondaryTextColor),
       hintStyle: const TextStyle(color: secondaryTextColor),
     ),
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-      backgroundColor: surfaceColor,
-      selectedItemColor: accentColor,
-      unselectedItemColor: secondaryTextColor,
+      backgroundColor: surfaceColor, // White
+      selectedItemColor: accentColor, // Lime Green
+      unselectedItemColor: secondaryTextColor, // Medium gray
       type: BottomNavigationBarType.fixed,
       elevation: 8,
     ),
     dividerTheme: const DividerThemeData(
-      color: darkGrey,
+      color: Color(0xFFE0E0E0), // Light gray divider
       thickness: 1,
       space: 32,
     ),
@@ -264,13 +264,13 @@ class AppTheme {
       onSurface: lightTextColor,
       onBackground: lightTextColor,
     ),
-    appBarTheme: AppBarTheme(
-      backgroundColor: lightSurfaceColor,
+    appBarTheme: const AppBarTheme(
+      backgroundColor: primaryColor, // Deep Purple
       elevation: 0,
       centerTitle: true,
-      iconTheme: IconThemeData(color: lightTextColor),
+      iconTheme: IconThemeData(color: Color(0xFFFFFFFF)), // White icons
       titleTextStyle: TextStyle(
-        color: lightTextColor,
+        color: Color(0xFFFFFFFF), // White text
         fontSize: 20,
         fontWeight: FontWeight.bold,
         letterSpacing: 0.5,
@@ -280,8 +280,8 @@ class AppTheme {
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        backgroundColor: accentColor,
-        foregroundColor: lightSurfaceColor,
+        backgroundColor: accentColor, // Lime Green
+        foregroundColor: const Color(0xFF000000), // Black text
         elevation: 4,
         padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
         shape: RoundedRectangleBorder(
@@ -377,9 +377,9 @@ class AppTheme {
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 0),
     ),
     chipTheme: ChipThemeData(
-      backgroundColor: Colors.grey.shade100,
-      selectedColor: accentColor.withOpacity(0.2),
-      labelStyle: TextStyle(color: lightTextColor),
+      backgroundColor: const Color(0xFFE8E8E8), // Light gray
+      selectedColor: accentColor.withOpacity(0.2), // Lime Green tint
+      labelStyle: const TextStyle(color: lightTextColor), // Dark gray text
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
@@ -387,7 +387,7 @@ class AppTheme {
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      fillColor: Colors.grey.shade50,
+      fillColor: const Color(0xFFF0F0F0), // Very light gray
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
         borderSide: BorderSide.none,
@@ -398,15 +398,15 @@ class AppTheme {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide: const BorderSide(color: accentColor),
+        borderSide: const BorderSide(color: accentColor, width: 2), // Lime Green
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide: const BorderSide(color: energyColor),
+        borderSide: const BorderSide(color: Color(0xFFFF3D71)), // Red
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-      labelStyle: TextStyle(color: lightSecondaryTextColor),
-      hintStyle: TextStyle(color: lightSecondaryTextColor),
+      labelStyle: const TextStyle(color: lightSecondaryTextColor),
+      hintStyle: const TextStyle(color: lightSecondaryTextColor),
     ),
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
       backgroundColor: lightSurfaceColor,
@@ -415,8 +415,8 @@ class AppTheme {
       type: BottomNavigationBarType.fixed,
       elevation: 8,
     ),
-    dividerTheme: DividerThemeData(
-      color: Colors.grey.shade200,
+    dividerTheme: const DividerThemeData(
+      color: Color(0xFFE0E0E0), // Light gray divider
       thickness: 1,
       space: 32,
     ),

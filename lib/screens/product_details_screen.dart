@@ -13,6 +13,7 @@ import '../screens/shop_screen.dart';
 import '../screens/wishlist_screen.dart';
 import '../screens/profile_screen.dart';
 import '../widgets/bottom_nav_bar.dart';
+import 'package:flutter_html/flutter_html.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
   final Map<String, dynamic> product;
@@ -545,12 +546,65 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             style: Theme.of(context).textTheme.titleLarge,
           ),
           const SizedBox(height: 12),
-          Text(
-            widget.product['description'],
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: Colors.grey.shade700,
-              height: 1.5,
-            ),
+          Html(
+            data: widget.product['description'] ?? '',
+            style: {
+              'body': Style(
+                margin: Margins.zero,
+                padding: HtmlPaddings.zero,
+                fontSize: FontSize(16),
+                lineHeight: const LineHeight(1.6),
+                color: Colors.grey.shade700,
+              ),
+              'p': Style(
+                margin: Margins.only(bottom: 12),
+                fontSize: FontSize(16),
+                lineHeight: const LineHeight(1.6),
+              ),
+              'strong': Style(
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+              'b': Style(
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+              'h1': Style(
+                fontSize: FontSize(24),
+                fontWeight: FontWeight.bold,
+                margin: Margins.only(top: 16, bottom: 12),
+                color: Colors.black87,
+              ),
+              'h2': Style(
+                fontSize: FontSize(22),
+                fontWeight: FontWeight.bold,
+                margin: Margins.only(top: 16, bottom: 12),
+                color: Colors.black87,
+              ),
+              'h3': Style(
+                fontSize: FontSize(20),
+                fontWeight: FontWeight.bold,
+                margin: Margins.only(top: 14, bottom: 10),
+                color: Colors.black87,
+              ),
+              'h4': Style(
+                fontSize: FontSize(18),
+                fontWeight: FontWeight.bold,
+                margin: Margins.only(top: 12, bottom: 8),
+                color: Colors.black87,
+              ),
+              'ul': Style(
+                margin: Margins.only(bottom: 12, left: 16),
+              ),
+              'ol': Style(
+                margin: Margins.only(bottom: 12, left: 16),
+              ),
+              'li': Style(
+                margin: Margins.only(bottom: 6),
+                fontSize: FontSize(16),
+                lineHeight: const LineHeight(1.6),
+              ),
+            },
           ),
         ],
       ),

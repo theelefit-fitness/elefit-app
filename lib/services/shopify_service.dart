@@ -433,47 +433,205 @@ class ShopifyService {
     }
   }
 
-  Future<Map<String, dynamic>?> getProducts({int first = 20, String? collectionId}) async {
-    String query = '''
+  Future<Map<String, dynamic>?> getProducts({int first = 20, String? collectionHandle, String? tag}) async {
+    String query;
+    
+    if (collectionHandle != null && collectionHandle.isNotEmpty) {
+      // Query products by collection handle
+      query = '''
+        query {
+          collection(handle: "$collectionHandle") {
+            products(first: $first) {
+              edges {
+                node {
+                  id
+                  title
+                  handle
+                  description
+                  descriptionHtml
+                  priceRange {
+                    minVariantPrice {
+                      amount
+                      currencyCode
+                    }
+                  }
+                  images(first: 5) {
+                    edges {
+                      node {
+                        url
+                        altText
+                      }
+                    }
+                  }
+                  variants(first: 10) {
+                    edges {
+                      node {
+                        id
+                        title
+                        price {
+                          amount
+                          currencyCode
+                        }
+                        availableForSale
+                        selectedOptions {
+                          name
+                          value
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ''';
+    } else if (tag != null && tag.isNotEmpty) {
+      // Query products by tag
+      query = '''
+        query {
+          products(first: $first, query: "tag:$tag") {
+            edges {
+              node {
+                id
+                title
+                handle
+                description
+                descriptionHtml
+                priceRange {
+                  minVariantPrice {
+                    amount
+                    currencyCode
+                  }
+                }
+                images(first: 5) {
+                  edges {
+                    node {
+                      url
+                      altText
+                    }
+                  }
+                }
+                variants(first: 10) {
+                  edges {
+                    node {
+                      id
+                      title
+                      price {
+                        amount
+                        currencyCode
+                      }
+                      availableForSale
+                      selectedOptions {
+                        name
+                        value
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ''';
+    } else {
+      // Query all products
+      query = '''
+        query {
+          products(first: $first) {
+            edges {
+              node {
+                id
+                title
+                handle
+                description
+                descriptionHtml
+                priceRange {
+                  minVariantPrice {
+                    amount
+                    currencyCode
+                  }
+                }
+                images(first: 5) {
+                  edges {
+                    node {
+                      url
+                      altText
+                    }
+                  }
+                }
+                variants(first: 10) {
+                  edges {
+                    node {
+                      id
+                      title
+                      price {
+                        amount
+                        currencyCode
+                      }
+                      availableForSale
+                      selectedOptions {
+                        name
+                        value
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ''';
+    }
+
+    try {
+      final graphQLClient = await client;
+      final QueryOptions options = QueryOptions(
+        document: gql(query),
+        fetchPolicy: FetchPolicy.noCache,
+      );
+
+      final QueryResult result = await graphQLClient.query(options);
+
+      if (result.hasException) {
+        print('Error fetching products: ${result.exception}');
+        return null;
+      }
+
+      // Debug logging
+      print('Query type: ${collectionHandle != null ? "Collection: $collectionHandle" : tag != null ? "Tag: $tag" : "All products"}');
+      print('Result data: ${result.data}');
+
+      // Handle collection query response differently
+      if (collectionHandle != null && collectionHandle.isNotEmpty) {
+        if (result.data?['collection'] != null) {
+          final products = result.data!['collection']['products'];
+          print('Products found in collection: ${products?['edges']?.length ?? 0}');
+          return {
+            'products': products
+          };
+        }
+        print('Collection not found or empty: $collectionHandle');
+        return null;
+      }
+
+      return result.data;
+    } catch (e) {
+      print('Exception while fetching products: $e');
+      return null;
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getCollections({int first = 20}) async {
+    const String query = '''
       query {
-        products(first: $first${collectionId != null ? ', query: "collection_id:$collectionId"' : ''}) {
+        collections(first: 20) {
           edges {
             node {
               id
               title
               handle
               description
-              priceRange {
-                minVariantPrice {
-                  amount
-                  currencyCode
-                }
-              }
-              images(first: 5) {
-                edges {
-                  node {
-                    url
-                    altText
-                  }
-                }
-              }
-              variants(first: 10) {
-                edges {
-                  node {
-                    id
-                    title
-                    price {
-                      amount
-                      currencyCode
-                    }
-                    availableForSale
-                    selectedOptions {
-                      name
-                      value
-                    }
-                  }
-                }
-              }
             }
           }
         }
@@ -490,14 +648,27 @@ class ShopifyService {
       final QueryResult result = await graphQLClient.query(options);
 
       if (result.hasException) {
-        print('Error fetching products: ${result.exception}');
-        return null;
+        print('Error fetching collections: ${result.exception}');
+        return [];
       }
 
-      return result.data;
+      if (result.data?['collections']?['edges'] != null) {
+        final collections = (result.data!['collections']['edges'] as List)
+            .map((edge) => edge['node'] as Map<String, dynamic>)
+            .toList();
+        
+        print('Available collections:');
+        for (var collection in collections) {
+          print('  - ${collection['title']} (handle: ${collection['handle']})');
+        }
+        
+        return collections;
+      }
+
+      return [];
     } catch (e) {
-      print('Exception while fetching products: $e');
-      return null;
+      print('Exception while fetching collections: $e');
+      return [];
     }
   }
 
@@ -670,6 +841,42 @@ class ShopifyService {
       return result.data;
     } catch (e) {
       print('Exception while creating customer: $e');
+      return null;
+    }
+  }
+
+  Future<Map<String, dynamic>?> customerRecover({required String email}) async {
+    const String mutation = '''
+      mutation customerRecover(\$email: String!) {
+        customerRecover(email: \$email) {
+          customerUserErrors {
+            code
+            field
+            message
+          }
+        }
+      }
+    ''';
+
+    try {
+      final graphQLClient = await client;
+      final MutationOptions options = MutationOptions(
+        document: gql(mutation),
+        variables: {
+          'email': email,
+        },
+      );
+
+      final QueryResult result = await graphQLClient.mutate(options);
+
+      if (result.hasException) {
+        print('Error sending password recovery email: ${result.exception}');
+        return null;
+      }
+
+      return result.data;
+    } catch (e) {
+      print('Exception while sending password recovery email: $e');
       return null;
     }
   }

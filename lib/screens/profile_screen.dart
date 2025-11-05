@@ -52,6 +52,149 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
+  void _showPasswordRecoveryDialog() {
+    print('Password recovery dialog triggered');
+    final emailController = TextEditingController(text: _userEmail ?? '');
+    final formKey = GlobalKey<FormState>();
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Reset Password'),
+        content: Form(
+          key: formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Enter your email address and we\'ll send you a link to reset your password.',
+                style: TextStyle(fontSize: 14),
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: emailController,
+                keyboardType: TextInputType.emailAddress,
+                decoration: const InputDecoration(
+                  labelText: 'Email',
+                  hintText: 'Enter your email',
+                  prefixIcon: Icon(Icons.email),
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your email';
+                  }
+                  if (!value.contains('@')) {
+                    return 'Please enter a valid email';
+                  }
+                  return null;
+                },
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              if (formKey.currentState!.validate()) {
+                Navigator.pop(context);
+                await _sendPasswordResetEmail(emailController.text);
+              }
+            },
+            child: const Text('Send Reset Link'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _sendPasswordResetEmail(String email) async {
+    print('Sending password reset email to: $email');
+    
+    // Show loading indicator
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+
+    try {
+      final shopifyService = ShopifyService();
+      print('Calling Shopify customerRecover...');
+      final result = await shopifyService.customerRecover(email: email);
+      print('Shopify result: $result');
+
+      if (!mounted) return;
+      
+      // Close loading indicator
+      Navigator.pop(context);
+
+      if (result != null) {
+        final errors = result['customerRecover']?['customerUserErrors'] as List?;
+        
+        if (errors == null || errors.isEmpty) {
+          // Success
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                'Password reset link sent to $email. Please check your email.',
+                style: GoogleFonts.poppins(),
+              ),
+              backgroundColor: Colors.green,
+              duration: const Duration(seconds: 5),
+            ),
+          );
+        } else {
+          // Show error
+          final errorMessage = errors.first['message'] ?? 'Failed to send reset email';
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                errorMessage,
+                style: GoogleFonts.poppins(),
+              ),
+              backgroundColor: Colors.red,
+              duration: const Duration(seconds: 4),
+            ),
+          );
+        }
+      } else {
+        // Network or other error
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Failed to send reset email. Please try again.',
+              style: GoogleFonts.poppins(),
+            ),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      
+      // Close loading indicator if still showing
+      Navigator.pop(context);
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'An error occurred. Please try again.',
+            style: GoogleFonts.poppins(),
+          ),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -113,6 +256,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
             },
             child: const Text('Sign In'),
           ),
+          const SizedBox(height: 16),
+          TextButton.icon(
+            onPressed: () {
+              _showPasswordRecoveryDialog();
+            },
+            icon: const Icon(Icons.lock_reset),
+            label: const Text('Forgot Password?'),
+          ),
         ],
       ),
     );
@@ -172,12 +323,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
           },
         ),
         const Divider(),
-        //ListTile(
-          //leading: const Icon(Icons.settings_outlined),
-          //title: const Text('Settings'),
-          //onTap: () {
-          //},
-        //),
+        ListTile(
+          leading: const Icon(Icons.lock_reset),
+          title: const Text('Change Password'),
+          onTap: () {
+            _showPasswordRecoveryDialog();
+          },
+        ),
+        ListTile(
+          leading: const Icon(Icons.settings_outlined),
+          title: const Text('Settings'),
+          onTap: () {
+            // Navigate to settings screen
+          },
+        ),
         ListTile(
           leading: const Icon(Icons.info_outline),
           title: const Text('About'),

@@ -9,7 +9,16 @@ import 'package:google_fonts/google_fonts.dart';
 import '../providers/location_provider.dart';
 
 class ShopScreen extends StatefulWidget {
-  const ShopScreen({Key? key}) : super(key: key);
+  final String? categoryName;
+  final String? collectionHandle;
+  final String? tag;
+  
+  const ShopScreen({
+    Key? key,
+    this.categoryName,
+    this.collectionHandle,
+    this.tag,
+  }) : super(key: key);
 
   @override
   State<ShopScreen> createState() => _ShopScreenState();
@@ -37,7 +46,18 @@ class _ShopScreenState extends State<ShopScreen> {
         _error = null;
       });
 
-      final products = await _shopifyService.getProducts();
+      // Try collection first
+      var products = await _shopifyService.getProducts(
+        collectionHandle: widget.collectionHandle,
+      );
+      
+      // If collection returns null or empty, try tag-based query
+      if (products == null && widget.tag != null) {
+        print('Collection not found, trying tag: ${widget.tag}');
+        products = await _shopifyService.getProducts(
+          tag: widget.tag,
+        );
+      }
       
       if (mounted) {
         setState(() {
@@ -61,12 +81,17 @@ class _ShopScreenState extends State<ShopScreen> {
       return [];
     }
 
+    final locationProvider = Provider.of<LocationProvider>(context, listen: false);
+
     final List<Map<String, dynamic>> products = (_productsData!['products']['edges'] as List)
         .map((edge) => edge['node'] as Map<String, dynamic>)
         .where((product) {
           final title = product['title'].toString().toLowerCase();
           final search = _searchQuery.toLowerCase();
-          return title.contains(search);
+          
+          // Filter by search query and location
+          return title.contains(search) && 
+                 locationProvider.shouldShowProduct(product['title'] ?? '');
         })
         .toList();
 
@@ -77,7 +102,7 @@ class _ShopScreenState extends State<ShopScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Shop'),
+        title: Text(widget.categoryName ?? 'Shop'),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(60),
           child: Container(
@@ -159,7 +184,7 @@ class _ShopScreenState extends State<ShopScreen> {
                               'images': (product['images']['edges'] as List)
                                   .map((edge) => edge['node']['url'] as String)
                                   .toList(),
-                              'description': product['description'],
+                              'description': product['descriptionHtml'] ?? product['description'] ?? '',
                               'variants': product['variants'],  // Add this line to include variants
                             },
                           },
@@ -224,7 +249,7 @@ class _ShopScreenState extends State<ShopScreen> {
                                               'imageUrl': product['images']['edges'].isNotEmpty 
                                                   ? product['images']['edges'][0]['node']['url'] 
                                                   : AppConstants.productPlaceholder,
-                                              'description': product['description'],
+                                              'description': product['descriptionHtml'] ?? product['description'] ?? '',
                                               'variantId': variantId,
                                               'variants': variants,
                                             });
@@ -285,7 +310,7 @@ class _ShopScreenState extends State<ShopScreen> {
                                               'imageUrl': product['images']['edges'].isNotEmpty 
                                                   ? product['images']['edges'][0]['node']['url'] 
                                                   : AppConstants.productPlaceholder,
-                                              'description': product['description'],
+                                              'description': product['descriptionHtml'] ?? product['description'] ?? '',
                                             },
                                             numericId,
                                             1,

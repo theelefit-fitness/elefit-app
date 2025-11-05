@@ -27,4 +27,26 @@ class LocationProvider with ChangeNotifier {
 
   String get currencyCode => _locationService.currencyCode;
   String get countryCode => _locationService.countryCode;
+  bool get isInIndia => _locationService.countryCode == 'IN';
+  
+  // List of products that should only be shown in India
+  static const List<String> indiaOnlyProducts = [
+    'digital kitchen scale',
+    'elefit smart bluetooth body fat scale with bright led display',
+  ];
+  
+  bool shouldShowProduct(String productTitle) {
+    if (isInIndia) {
+      return true; // Show all products in India
+    }
+    
+    // Outside India, hide India-only products
+    final titleLower = productTitle.toLowerCase().trim();
+    for (var restrictedProduct in indiaOnlyProducts) {
+      if (titleLower.contains(restrictedProduct.toLowerCase())) {
+        return false;
+      }
+    }
+    return true;
+  }
 }

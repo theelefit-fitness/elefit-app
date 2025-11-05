@@ -77,6 +77,9 @@ class _HomeScreenState extends State<HomeScreen> {
         _error = null;
       });
 
+      // Fetch available collections for debugging
+      await _shopifyService.getCollections();
+
       final products = await _shopifyService.getProducts();
 
       if (mounted) {
@@ -280,7 +283,14 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           SizedBox(height: height * 0.03),
                           ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const ShopScreen(),
+                                ),
+                              );
+                            },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.white,
                               foregroundColor: AppTheme.primaryColor,
@@ -339,9 +349,27 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildCategories() {
   final categories = [
-    {'name': 'Gear Up', 'count': '4 Products', 'icon': Icons.fitness_center},
-    {'name': 'Inspire', 'count': '2 Products', 'icon': Icons.card_giftcard},
-    {'name': 'Sale', 'count': '6 Products', 'icon': Icons.local_offer},
+    {
+      'name': 'Gear Up',
+      'count': '4 Products',
+      'icon': Icons.fitness_center,
+      'collectionHandle': 'active-essentials',
+      'tag': 'Gear Up'
+    },
+    {
+      'name': 'Inspire',
+      'count': '2 Products',
+      'icon': Icons.card_giftcard,
+      'collectionHandle': 'tech-wear-1',
+      'tag': 'Inspire'
+    },
+    {
+      'name': 'Sale',
+      'count': '6 Products',
+      'icon': Icons.local_offer,
+      'collectionHandle': 'sale-products',
+      'tag': 'Sale'
+    },
   ];
 
   return Padding(
@@ -379,7 +407,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const ShopScreen(),
+                      builder: (context) => ShopScreen(
+                        categoryName: category['name'] as String,
+                        collectionHandle: category['collectionHandle'] as String,
+                        tag: category['tag'] as String,
+                      ),
                     ),
                   );
                 },
@@ -471,8 +503,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildProductList(Map<String, dynamic> data) {
+    final locationProvider = Provider.of<LocationProvider>(context, listen: false);
+    
     final products = (data['products']['edges'] as List)
         .map((edge) => edge['node'] as Map<String, dynamic>)
+        .where((product) => locationProvider.shouldShowProduct(product['title'] ?? ''))
         .take(5)
         .toList();
 
@@ -502,7 +537,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       'images': (product['images']['edges'] as List)
                           .map((edge) => edge['node']['url'] as String)
                           .toList(),
-                      'description': product['description'],
+                      'description': product['descriptionHtml'] ?? product['description'] ?? '',
                       'variants': product['variants'],  // Add this line to include variants
                     },
                   },
@@ -568,7 +603,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         'imageUrl': product['images']['edges'].isNotEmpty 
                                             ? product['images']['edges'][0]['node']['url'] 
                                             : AppConstants.productPlaceholder,
-                                        'description': product['description'],
+                                        'description': product['descriptionHtml'] ?? product['description'] ?? '',
                                         'variantId': variantId,
                                         'variants': variants,
                                       });
@@ -628,7 +663,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         'imageUrl': product['images']['edges'].isNotEmpty 
                                             ? product['images']['edges'][0]['node']['url'] 
                                             : AppConstants.productPlaceholder,
-                                        'description': product['description'],
+                                        'description': product['descriptionHtml'] ?? product['description'] ?? '',
                                       },
                                       variantId,
                                       1,
@@ -677,8 +712,11 @@ class _HomeScreenState extends State<HomeScreen> {
       return const SizedBox.shrink();
     }
 
+    final locationProvider = Provider.of<LocationProvider>(context, listen: false);
+    
     final products = (_productsData!['products']['edges'] as List)
         .map((edge) => edge['node'] as Map<String, dynamic>)
+        .where((product) => locationProvider.shouldShowProduct(product['title'] ?? ''))
         .take(4)
         .toList();
 
@@ -753,7 +791,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           'images': (product['images']['edges'] as List)
                               .map((edge) => edge['node']['url'] as String)
                               .toList(),
-                          'description': product['description'],
+                          'description': product['descriptionHtml'] ?? product['description'] ?? '',
                         },
                       },
                     );
@@ -817,7 +855,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           'imageUrl': product['images']['edges'].isNotEmpty 
                                               ? product['images']['edges'][0]['node']['url'] 
                                               : AppConstants.productPlaceholder,
-                                          'description': product['description'],
+                                          'description': product['descriptionHtml'] ?? product['description'] ?? '',
                                           'variantId': variantId,
                                           'variants': variants,
                                         });
@@ -883,7 +921,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           'imageUrl': product['images']['edges'].isNotEmpty 
                                               ? product['images']['edges'][0]['node']['url'] 
                                               : AppConstants.productPlaceholder,
-                                          'description': product['description'],
+                                          'description': product['descriptionHtml'] ?? product['description'] ?? '',
                                           'variantId': product['variants']['edges'][0]['node']['id'], // Add the variant ID
                                         },
                                         product['variants']['edges'][0]['node']['id'], // Use the variant ID as the cart item ID
