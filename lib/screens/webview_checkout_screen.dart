@@ -453,7 +453,7 @@ class _WebViewCheckoutScreenState extends State<WebViewCheckoutScreen> {
             
             // Check for external payment app schemes that should be launched externally
             final paymentSchemes = [
-              'googlepay://', 'tez://', 'paytm://', 'phonepe://', 
+              'tez://', 'paytm://', 'phonepe://', 
               'upi://', 'bhim://', 'amazonpay://', 'paypal://',
               'venmo://', 'cashapp://', 'zelle://', 'applepay://',
               'samsungpay://', 'intent://', 'market://', 'play.google.com'
@@ -461,8 +461,6 @@ class _WebViewCheckoutScreenState extends State<WebViewCheckoutScreen> {
             
             // Check for payment app URLs that should be launched externally
             final paymentAppUrls = [
-              'pay.google.com', 'payments.google.com',
-              'wallet.google.com', 'pay.app.goo.gl',
               'paypal.me', 'paypal.com/checkoutnow',
               'venmo.com/pay', 'cash.app/pay'
             ];
