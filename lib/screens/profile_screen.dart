@@ -3,6 +3,7 @@ import '../theme/app_theme.dart';
 import '../services/shopify_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'auth_screen.dart';
+import 'settings_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../providers/theme_provider.dart';
@@ -334,7 +335,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
           leading: const Icon(Icons.settings_outlined),
           title: const Text('Settings'),
           onTap: () {
-            // Navigate to settings screen
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const SettingsScreen(),
+              ),
+            );
           },
         ),
         ListTile(
